@@ -66,7 +66,7 @@ def process_llm_response(llm_response):
     if len(response.split()) < 50:  # Example condition for short responses
         response += "\n\nCan you provide more details?"
     return response
-
+//hello
 
 def store_feedback(user_input, response, feedback):
     """Stores user feedback in the SQLite database."""
