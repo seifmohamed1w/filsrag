@@ -84,27 +84,44 @@ with message_container.container():
         st.markdown(f'<div class="chatbox chatbot">Bot: {message["bot"]}</div>', unsafe_allow_html=True)
 
 # Fixed input area
+# Fixed input area
 with st.container():
     st.markdown('<div class="fixed-input">', unsafe_allow_html=True)
-    user_input = st.text_input("", key="user_input", placeholder="Type your message here...")
+
+    # Use a separate key for managing the display of input to avoid conflict
+    if 'temp_input' not in st.session_state:
+        st.session_state.temp_input = ""
+
+    # Capture input using the temporary state variable
+    user_input = st.text_input("", value=st.session_state.temp_input, key="user_input",
+                               placeholder="Type your message here...")
+    submit_button = st.button("Send")
+
+    if submit_button:
+        if user_input:  # Process the input if it is not empty
+            context = get_contextual_prompt(user_input)
+            full_prompt = context + f" User: {user_input}" if context else user_input
+            llm_response = qa_chain(full_prompt)
+            bot_response = process_llm_response(llm_response)
+
+            add_to_chat(user_input, bot_response)
+
+            # Reset the temporary input after processing to clear the field
+            st.session_state.temp_input = ""
+
+            # Collect feedback right after displaying the response
+            feedback = st.radio("Was this answer helpful?", ('Yes', 'No'), key="feedback")
+            if st.button("Submit Feedback"):
+                store_feedback(user_input, bot_response, feedback)
+                st.success("Feedback submitted!")
+
+            # Redisplay the updated chat history
+            message_container.empty()
+            with message_container.container():
+                for message in st.session_state.chat_history:
+                    st.markdown(f'<div class="chatbox user">You: {message["user"]}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="chatbox chatbot">Bot: {message["bot"]}</div>', unsafe_allow_html=True)
+        else:
+            st.session_state.temp_input = ""  # Ensure input is cleared if 'send' is hit without input
+
     st.markdown('</div>', unsafe_allow_html=True)
-    if user_input:
-        context = get_contextual_prompt(user_input)
-        full_prompt = context + f" User: {user_input}" if context else user_input
-        llm_response = qa_chain(full_prompt)
-        bot_response = process_llm_response(llm_response)
-
-        add_to_chat(user_input, bot_response)
-
-        # Collect feedback right after displaying the response
-        feedback = st.radio("Was this answer helpful?", ('Yes', 'No'), key="feedback")
-        if st.button("Submit Feedback"):
-            store_feedback(user_input, bot_response, feedback)
-            st.success("Feedback submitted!")
-
-        # Redisplay the updated chat history
-        message_container.empty()
-        with message_container.container():
-            for message in st.session_state.chat_history:
-                st.markdown(f'<div class="chatbox user">You: {message["user"]}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="chatbox chatbot">Bot: {message["bot"]}</div>', unsafe_allow_html=True)
