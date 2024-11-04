@@ -4,9 +4,10 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_openai import OpenAI
 from langchain.chains import RetrievalQA
+import streamlit as st
 
-# Set the OpenAI API key securely
-os.environ["OPENAI_API_KEY"] = "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"
+api_key = st.secrets["OPENAI_API_KEY"]
+os.environ["OPENAI_API_KEY"] = api_key
 
 # Define the directory to persist the database
 persist_directory = 'db'
