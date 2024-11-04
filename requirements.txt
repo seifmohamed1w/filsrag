@@ -11,5 +11,6 @@ sentence-transformers==3.2.1
 scikit-learn==1.5.2
 tdqm==0.0.1
 pandas==2.2.3
+protobuf==3.20.0
 pysqlite3-binary
 
