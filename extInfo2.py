@@ -1,12 +1,12 @@
 import os
 import sqlite3
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain.llms import OpenAI
+from langchain_chroma import Chroma
+from langchain_openai import OpenAI
 from langchain.chains import RetrievalQA
 
 # Set the OpenAI API key securely
-os.environ["OPENAI_API_KEY"] = "sk-proj-Sh94iA7xhL7hZE5t44poT3BlbkFJbD09KwgskDgHVpJVOJRa"
+os.environ["OPENAI_API_KEY"] = "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"
 
 # Define the directory to persist the database
 persist_directory = 'db'
@@ -25,7 +25,7 @@ retriever = vectordb.as_retriever()
 
 # Create the QA chain using OpenAI LLM
 qa_chain = RetrievalQA.from_chain_type(
-    llm=OpenAI(max_tokens=500),
+    llm=OpenAI(max_tokens=500,model="gpt-3.5-turbo-instruct"),
     chain_type="stuff",
     retriever=retriever,
     return_source_documents=True
