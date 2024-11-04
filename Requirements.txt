@@ -10,6 +10,5 @@ langchain-community==0.3.3
 sentence-transformers==3.2.1
 scikit-learn==1.5.2
 tdqm==0.0.1
-numpy==2.0.2
 pandas==2.2.3
-sqlite3==2.6.0
+
